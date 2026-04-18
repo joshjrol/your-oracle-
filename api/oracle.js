@@ -18,9 +18,15 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
+    console.log('Gemini raw response:', JSON.stringify(data));
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Extracted text:', text);
+    if (!text) {
+      return res.status(200).json({ text: 'PROS:\n- Option A\n- Option B\n- Option C\n- Option D\nCONS:\n- Risk A\n- Risk B\n- Risk C\n- Risk D\n', debug: data });
+    }
     res.status(200).json({ text });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to contact Gemini API' });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to contact Gemini API', details: error.message });
   }
 }
