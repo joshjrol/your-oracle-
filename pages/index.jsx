@@ -4,12 +4,67 @@ const figures = [
   { id: 'marcus', name: 'Marcus Aurelius', title: 'Emperor of Rome', color: '#C9A84C' },
   { id: 'achilles', name: 'Achilles', title: 'Hero of the Iliad', color: '#CC3333' },
   { id: 'churchill', name: 'Winston Churchill', title: 'Prime Minister of Britain', color: '#4477AA' },
-  { id: 'odysseus', name: 'Odysseus', title: 'King of Ithaca', color: '#2A9D8F' },
-  { id: 'athena', name: 'Athena', title: 'Goddess of Wisdom', color: '#7B5EA7' },
   { id: 'socrates', name: 'Socrates', title: 'Father of Philosophy', color: '#E07B39' },
-  { id: 'leonidas', name: 'Leonidas', title: 'King of Sparta', color: '#AA2222' },
-  { id: 'cassandra', name: 'Cassandra', title: 'Prophetess of Troy', color: '#4A2060' },
+  { id: 'mao', name: 'Chairman Mao', title: 'Chairman of China', color: '#CC0000' },
+  { id: 'napoleon', name: 'Napoleon Bonaparte', title: 'Emperor of France', color: '#003399' },
+  { id: 'teresa', name: 'Mother Teresa', title: 'Saint of Calcutta', color: '#FFFFFF' },
+  { id: 'partridge', name: 'Alan Partridge', title: 'Presenter, DJ, Author', color: '#FFD700' },
 ];
+
+const quotes = {
+  marcus: [
+    "You have power over your mind, not outside events. Realize this, and you will find strength.",
+    "The happiness of your life depends upon the quality of your thoughts.",
+    "Never let the future disturb you. You will meet it with the same weapons of reason which today arm you against the present.",
+    "It is not death that a man should fear, but he should fear never beginning to live.",
+    "The first rule is to keep an untroubled spirit. The second is to look things in the face and know them for what they are.",
+  ],
+  churchill: [
+    "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    "If you're going through hell, keep going.",
+    "To improve is to change; to be perfect is to change often.",
+    "The price of greatness is responsibility.",
+    "I never worry about action, but only about inaction.",
+  ],
+  socrates: [
+    "The unexamined life is not worth living.",
+    "There is only one good, knowledge, and one evil, ignorance.",
+    "The hour of departure has arrived, and we go our ways — I to die, and you to live. Which is better, God only knows.",
+    "I know that I know nothing.",
+    "Be as you wish to seem.",
+  ],
+  mao: [
+    "Political power grows out of the barrel of a gun.",
+    "A revolution is not a dinner party.",
+    "Let a hundred flowers bloom, let a hundred schools of thought contend.",
+    "The guerrilla must move amongst the people as a fish swims in the sea.",
+    "We think too small, like the frog at the bottom of the well. If he surfaced, he would have an entirely different view.",
+  ],
+  napoleon: [
+    "Never interrupt your enemy when he is making a mistake.",
+    "Victory belongs to the most persevering.",
+    "Impossible is a word to be found only in the dictionary of fools.",
+    "Take time to deliberate, but when the time for action has arrived, stop thinking and go in.",
+    "A leader is a dealer in hope.",
+  ],
+  teresa: [
+    "Not all of us can do great things. But we can do small things with great love.",
+    "If you judge people, you have no time to love them.",
+    "The biggest disease today is not leprosy or tuberculosis, but rather the feeling of being unwanted.",
+    "We ourselves feel that what we are doing is just a drop in the ocean. But if that drop were not there, the ocean would be missing something.",
+    "It is not how much we do, but how much love we put into what we do.",
+  ],
+  achilles: [
+    "I would rather die in battle than live without glory.",
+  ],
+  partridge: [
+    "Jurassic Park. Surely the most thrilling 25 minutes in cinema history... and then it does go on a bit.",
+    "Smell my cheese. You mother.",
+    "Cash back!",
+    "I'm having an affair with a woman called Lynn. She works for me. She's Lynn with an E. Which for a man in my position is the worst possible Lynn.",
+    "A-ha!",
+  ],
+};
 
 export default function OracleOfAges() {
   const [step, setStep] = useState(1);
@@ -59,6 +114,7 @@ export default function OracleOfAges() {
       .cons li::before { content: '−'; position: absolute; left: 0; color: #CC3333; }
       .verdict-card { border-left: 3px solid var(--fig-color); padding: 1rem 1.25rem; margin-bottom: 1rem; background: #0a0806; border-radius: 0 8px 8px 0; }
       .verdict-name { font-family: 'Cinzel', serif; font-size: 0.85rem; margin-bottom: 0.5rem; }
+      .verdict-quote { font-size: 0.85rem; color: #a09070; font-style: italic; margin-bottom: 0.6rem; border-left: 2px solid #2a2418; padding-left: 0.75rem; }
       .verdict-text { font-size: 1.05rem; line-height: 1.65; font-style: italic; }
       .loading { text-align: center; padding: 3rem; color: #a09070; font-style: italic; }
       .limit-note { text-align: center; font-size: 0.85rem; color: #706050; margin-top: 0.5rem; }
@@ -90,26 +146,33 @@ export default function OracleOfAges() {
     setLoading(true);
     setStep(3);
     const chosenFigures = figures.filter(f => selected.includes(f.id));
+
     const figureInstructions = chosenFigures.map(f => {
+      const figQuotes = quotes[f.id];
+      const quotesText = figQuotes.length > 1
+        ? `Choose the most relevant of these verified quotes to weave naturally into your verdict:\n${figQuotes.map((q, i) => `  ${i + 1}. "${q}"`).join('\n')}`
+        : `Use this quote naturally in your verdict: "${figQuotes[0]}"`;
+
       const personas = {
-        marcus: 'Respond as Marcus Aurelius — stoic, duty-bound, measured. Reference virtue and reason.',
-        achilles: 'Respond as Achilles — passionate, glory-driven, fiery. Speak of honour and legacy.',
-        churchill: 'Respond as Winston Churchill — defiant, witty, bulldog resolve. Use powerful rhetoric.',
-        odysseus: 'Respond as Odysseus — cunning, long-game thinker, wry. Think of strategy and patience.',
-        athena: 'Respond as Athena — clear-eyed, strategic, authoritative. Cut to the heart of the matter.',
-        socrates: 'Respond as Socrates — never answer directly, only ask probing questions that illuminate.',
-        leonidas: 'Respond as Leonidas — brutally blunt, one or two sentences maximum. No elaboration.',
-        cassandra: 'Respond as Cassandra — darkly prophetic, doom-tinged. Warn of what others refuse to see.',
+        marcus: `Respond as Marcus Aurelius — stoic, duty-bound, measured. Reference virtue and reason. ${quotesText}`,
+        achilles: `Respond as Achilles — passionate, glory-driven, fiery. Speak of honour and legacy. ${quotesText}`,
+        churchill: `Respond as Winston Churchill — defiant, witty, bulldog resolve. Use powerful rhetoric. ${quotesText}`,
+        socrates: `Respond as Socrates — never answer directly, only ask probing questions that illuminate the dilemma. ${quotesText}`,
+        mao: `Respond as Chairman Mao — ideological, revolutionary, collective-minded. Frame everything as struggle and transformation. ${quotesText}`,
+        napoleon: `Respond as Napoleon Bonaparte — bold, strategic, supremely self-confident. Think in terms of victory and opportunity. ${quotesText}`,
+        teresa: `Respond as Mother Teresa — compassionate, humble, spiritually grounded. Focus on love, service and what truly matters. ${quotesText}`,
+        partridge: `Respond as Alan Partridge — bumbling, self-important, accidentally profound. Use one of these authentic Alan Partridge quotes naturally and build a hilariously misguided verdict around it. ${quotesText}`,
       };
       return `${f.name}: ${personas[f.id]}`;
-    }).join('\n');
+    }).join('\n\n');
 
     const systemPrompt = `You are the Oracle of Ages. A user brings you a dilemma. You will:
 1. Provide exactly 4 pros and 4 cons as short phrases.
-2. Then provide a verdict from each of these figures in their distinct voice:
+2. Then provide a verdict from each chosen figure. Each verdict must be 3-4 sentences long, written entirely in that figure's voice, and must naturally include one of their provided quotes. For historical figures, the quote should feel organic — not bolted on. For Alan Partridge, lean into the comedy.
+
 ${figureInstructions}
 
-Format your response EXACTLY like this:
+Format your response EXACTLY like this — do not add any other text or headers:
 PROS:
 - [pro 1]
 - [pro 2]
@@ -129,7 +192,11 @@ ${chosenFigures.map(f => `VERDICT_${f.id.toUpperCase()}:\n[verdict text]`).join(
         body: JSON.stringify({ systemPrompt, userMessage: `The dilemma: ${dilemma}` }),
       });
       const data = await res.json();
-      parseResult(data.text, chosenFigures);
+      if (data.error) {
+        setResult({ error: data.error });
+      } else {
+        parseResult(data.text, chosenFigures);
+      }
     } catch {
       setResult({ error: 'Something went wrong. Please try again.' });
     }
